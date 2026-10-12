@@ -82,6 +82,12 @@ BASE_CONTAINERS = [
         "SequenceContainer": {
             "name": "FPrimeEvent",
             "abstract": "true",
+            # YAMCS archives a packet under the name of its most specific container, unless that container inherits
+            # from a container marked as an archive partition, whose name YAMCS uses instead. We mark FPrimeEvent so
+            # that the events that have containers of their own are archived as FPrimeEvent like every other event.
+            "AncillaryDataSet": [
+                {"AncillaryData": {"name": "Yamcs", "#text": "UseAsArchivingPartition"}},
+            ],
             "EntryList": [
                 {"ParameterRefEntry": {"parameterRef": "DataDescType"}},
                 {"ParameterRefEntry": {"parameterRef": "FPrimeEventId"}},
