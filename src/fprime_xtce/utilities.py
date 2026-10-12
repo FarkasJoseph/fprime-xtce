@@ -187,6 +187,30 @@ def formal_parameter_types(fprime_section):
     return [parameter["type"] for parameter in formal_parameters(fprime_section)]
 
 
+# Verifiers for every command, mapped to the Svc.CommandDispatcher event each watches, in the order XTCE requires
+COMMAND_VERIFIER_EVENTS = {
+    "ExecutionVerifier": "OpCodeDispatched",
+    "CompleteVerifier": "OpCodeCompleted",
+    "FailedVerifier": "OpCodeError",
+}
+
+
+def command_verifier_events(fprime_dict):
+    """ Helper function to find the events that command verifiers watch
+
+    Args:
+        fprime_dict: F Prime dictionary (loaded from JSON)
+    Returns:
+        A dictionary mapping XTCE verifier names to F Prime events, without the verifiers whose events are missing
+    """
+    return {
+        verifier: event
+        for verifier, event_name in COMMAND_VERIFIER_EVENTS.items()
+        for event in fprime_dict["events"]
+        if event["name"].endswith(f".{event_name}")
+    }
+
+
 def get_or_create_nested_space_system(root: Dict[str, Any], namespace_path: List[str]) -> Dict[str, Any]:
     """Navigate or create nested SpaceSystem hierarchy.
 
