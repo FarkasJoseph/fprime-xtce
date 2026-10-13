@@ -21,13 +21,14 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Tuple, List
 
+from fprime_xtce.container_generation import build_verifier
 from fprime_xtce.type_converter import (
     DEFAULT_STRING_SIZE_TAG_BITS,
     convert_struct_definition,
     convert_type_definitions,
     string_size_tag_bits,
 )
-from fprime_xtce.utilities import extract_namespace_components
+from fprime_xtce.utilities import extract_namespace_components, invalid_command_event
 from fprime_xtce.xtce import validate_xtce
 
 XTCE_NS = "{http://www.omg.org/spec/XTCE/20180204}"
@@ -544,6 +545,22 @@ class TestInlineMemberArrays(unittest.TestCase):
         dimension = array_type["DimensionList"]["Dimension"]
         self.assertEqual(dimension["StartingIndex"]["FixedValue"], 0)
         self.assertEqual(dimension["EndingIndex"]["FixedValue"], 3199)
+
+
+class TestInvalidCommandEvent(unittest.TestCase):
+    """Test which InvalidCommand event the failed verifier watches"""
+
+    def test_other_component_has_invalid_command(self):
+        """An InvalidCommand event of another component, such as Svc.FpySequencer, is not used"""
+        names = ["fpySeqA.InvalidCommand", "cmdDisp.OpCodeError", "cmdDisp.InvalidCommand", "fpySeqB.InvalidCommand"]
+        event = invalid_command_event({"events": [{"name": name} for name in names]})
+        self.assertEqual(event["name"], "cmdDisp.InvalidCommand")
+
+    def test_dispatcher_without_invalid_command(self):
+        """A command dispatcher without an InvalidCommand event gets a failed verifier with no InvalidCommand case"""
+        opcode_error = {"name": "cmdDisp.OpCodeError", "id": 3, "formalParams": [{"name": "Opcode"}, {"name": "error"}]}
+        verifier = build_verifier("FailedVerifier", opcode_error, invalid_command_event({"events": [opcode_error]}))
+        self.assertNotIn("INVALID_OPCODE", verifier["FailedVerifier"]["CustomAlgorithm"]["AlgorithmText"]["#text"])
 
 
 if __name__ == "__main__":

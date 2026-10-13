@@ -214,6 +214,23 @@ def command_verifier_events(fprime_dict):
     }
 
 
+def invalid_command_event(fprime_dict):
+    """ Helper function to find the InvalidCommand event of the command dispatcher
+
+    Args:
+        fprime_dict: F Prime dictionary (loaded from JSON)
+    Returns:
+        The InvalidCommand event of the command dispatcher, None when the dictionary lacks it or lacks OpCodeError
+    """
+    opcode_error = command_verifier_events(fprime_dict).get("FailedVerifier")
+    if not opcode_error:
+        return None
+    # Svc.FpySequencer has an event named InvalidCommand as well. We want the one that the command dispatcher emits,
+    # so we look for it on the instance that emits OpCodeError.
+    instance = opcode_error["name"].rsplit(".", 1)[0]
+    return next((event for event in fprime_dict["events"] if event["name"] == f"{instance}.InvalidCommand"), None)
+
+
 def get_or_create_nested_space_system(root: Dict[str, Any], namespace_path: List[str]) -> Dict[str, Any]:
     """Navigate or create nested SpaceSystem hierarchy.
 
