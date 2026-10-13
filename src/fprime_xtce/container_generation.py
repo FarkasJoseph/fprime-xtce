@@ -5,7 +5,7 @@ Copyright (c) 2026 LeStarch. All rights reserved.
 This software is Licensed under the Apache 2.0 License. See LICENSE for details.
 """
 
-from .utilities import xtce_names, convert_to_xtce_reference, command_verifier_events
+from .utilities import xtce_names, convert_to_xtce_reference, command_verifier_events, invalid_command_event
 from .primitive_containers import BASE_COMMANDS, BASE_CONTAINERS
 
 
@@ -109,11 +109,20 @@ def generate_xtce_containers(fprime_dict, xtce_parameters):
         )
 
     # Add containers for the events that command verifiers watch (pairs with CommandDispatcher)
-    for event in command_verifier_events(fprime_dict).values():
+    verifier_events = command_verifier_events(fprime_dict)
+    for event in verifier_events.values():
         parameter_refs = [f"{event['name']}.{param['name']}" for param in event["formalParams"]]
         xtce_containers.append(
             build_container(event, parameter_refs, "FPrimeEvent", "FPrimeEventId", params)
         )
+
+    # Unknown opcodes raise InvalidCommand instead of OpCodeError. XTCE allows only one failed verifier, so decode the
+    # opcode of InvalidCommand into the opcode parameter of OpCodeError, which that verifier reads
+    invalid_command = invalid_command_event(fprime_dict)
+    if invalid_command:
+        opcode_error = verifier_events["FailedVerifier"]
+        opcode_ref = f"{opcode_error['name']}.{opcode_error['formalParams'][0]['name']}"
+        xtce_containers.append(build_container(invalid_command, [opcode_ref], "FPrimeEvent", "FPrimeEventId", params))
 
     # TODO: Add containers for events (pairs with EventManager) when event support is implemented
     # for event in fprime_dict["events"]:
@@ -128,12 +137,13 @@ def generate_xtce_containers(fprime_dict, xtce_parameters):
     return xtce_containers
 
 
-def build_verifier(verifier, event):
+def build_verifier(verifier, event, invalid_command):
     """Build a command verifier that waits for an event to report the opcode of the command
 
     Args:
         verifier: The XTCE verifier to build, "ExecutionVerifier", "CompleteVerifier" or "FailedVerifier"
         event: The F Prime event whose first formal parameter is the opcode of the command
+        invalid_command: The InvalidCommand event, which the failed verifier watches as well
     Returns:
         A dictionary representing the verifier
     """
@@ -146,8 +156,19 @@ def build_verifier(verifier, event):
     if verifier == "FailedVerifier":
         # The response code (e.g. EXECUTION_ERROR) becomes the reason the command failed
         inputs["error"] = refs[1]
-        reason = "error.getEngValue().toString()"
-        text = f"return {same_opcode} ? new org.yamcs.commanding.VerificationResult(true, {reason}) : null;"
+        # The event id tells OpCodeError from InvalidCommand, since both fill eventOpcode
+        inputs["eventId"] = "FPrimeEventId"
+        # The event id makes YAMCS run this for every event packet, so skip other events before reading stale inputs
+        text = (
+            "long id = eventId.getEngValue().toLong();\n"
+            "String reason;\n"
+            # L makes the id a Java long, since an event id may not fit in an int
+            f"if (id == {event['id']}L) reason = error.getEngValue().toString();\n"
+            # InvalidCommand has no response code, so use the Fw.CmdResponse label for an unknown opcode
+            f'else if (id == {invalid_command["id"]}L) reason = "INVALID_OPCODE";\n'
+            "else return null;\n"
+            f"return {same_opcode} ? new org.yamcs.commanding.VerificationResult(true, reason) : null;"
+        )
     xtce_verifier = {
         "CustomAlgorithm": {
             "name": f"FPrime{verifier}",
@@ -187,7 +208,11 @@ def generate_xtce_commands(fprime_dict, xtce_command_types, deployment):
         List of XTCE command definitions converted from the F Prime dictionary
     """
     commands = BASE_COMMANDS.copy()
-    verifiers = [build_verifier(verifier, event) for verifier, event in command_verifier_events(fprime_dict).items()]
+    invalid_command = invalid_command_event(fprime_dict)
+    verifiers = [
+        build_verifier(verifier, event, invalid_command)
+        for verifier, event in command_verifier_events(fprime_dict).items()
+    ]
     if verifiers:
         # Put the verifiers on FPrimeCommand, the last base command, which every F Prime command inherits
         # We replace the entry because it is the same dictionary that BASE_COMMANDS holds, which we must not change.

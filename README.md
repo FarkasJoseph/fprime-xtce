@@ -22,7 +22,7 @@ F Prime events are a construct above XTCE containers. These are represented and 
 
 ## Command Completion
 
-The generated XTCE gives every command verifiers that watch the command dispatcher's events, so YAMCS reports when a command is dispatched and whether it completed or failed. A failed command shows the response code from `OpCodeError`, such as `EXECUTION_ERROR`. These events identify a command only by its opcode, so the next command with the same opcode can end one that is still waiting.
+YAMCS reports when each command is dispatched and whether it completed or failed, using verifiers that watch the command dispatcher's events `OpCodeDispatched`, `OpCodeCompleted`, `OpCodeError` and `InvalidCommand`. A failed command shows its response code, such as `EXECUTION_ERROR`, or `INVALID_OPCODE` when the dispatcher doesn't know the opcode. These events identify a command only by its opcode, so if two commands with the same opcode are waiting at once, the events of either can mark the other dispatched, completed or failed.
 
 ## License
 

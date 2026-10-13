@@ -902,11 +902,17 @@
           </CompleteVerifier>
           <FailedVerifier>
             <CustomAlgorithm name="FPrimeFailedVerifier">
-              <AlgorithmText language="java-expression">return eventOpcode.getEngValue().toLong() == commandOpcode.getEngValue().toLong() ? new org.yamcs.commanding.VerificationResult(true, error.getEngValue().toString()) : null;</AlgorithmText>
+              <AlgorithmText language="java-expression">long id = eventId.getEngValue().toLong();
+String reason;
+if (id == 16777219L) reason = error.getEngValue().toString();
+else if (id == 16777221L) reason = "INVALID_OPCODE";
+else return null;
+return eventOpcode.getEngValue().toLong() == commandOpcode.getEngValue().toLong() ? new org.yamcs.commanding.VerificationResult(true, reason) : null;</AlgorithmText>
               <InputSet>
                 <InputParameterInstanceRef parameterRef="CdhCore/cmdDisp/OpCodeError/Opcode" inputName="eventOpcode" />
                 <InputParameterInstanceRef parameterRef="/yamcs/cmd/arg/OpCode" inputName="commandOpcode" />
                 <InputParameterInstanceRef parameterRef="CdhCore/cmdDisp/OpCodeError/error" inputName="error" />
+                <InputParameterInstanceRef parameterRef="FPrimeEventId" inputName="eventId" />
               </InputSet>
             </CustomAlgorithm>
             <CheckWindow timeToStopChecking="P365D" timeWindowIsRelativeTo="commandRelease" />
@@ -994,6 +1000,18 @@
               <RestrictionCriteria>
                 <ComparisonList>
                   <Comparison parameterRef="FPrimeEventId" value="16777219" />
+                </ComparisonList>
+              </RestrictionCriteria>
+            </BaseContainer>
+          </SequenceContainer>
+          <SequenceContainer name="InvalidCommand">
+            <EntryList>
+              <ParameterRefEntry parameterRef="CdhCore/cmdDisp/OpCodeError/Opcode" />
+            </EntryList>
+            <BaseContainer containerRef="FPrimeEvent">
+              <RestrictionCriteria>
+                <ComparisonList>
+                  <Comparison parameterRef="FPrimeEventId" value="16777221" />
                 </ComparisonList>
               </RestrictionCriteria>
             </BaseContainer>
