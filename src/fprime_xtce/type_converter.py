@@ -214,6 +214,9 @@ def _convert_string_type(fprime_type_desc, detected_string_types, deployment, is
             "StringDataEncoding": string_data_encoding
         }
     }
+    if is_command:
+        # YAMCS reports this limit to clients as the string argument's maxChars
+        xtce_type["StringParameterType"]["SizeRangeInCharacters"] = {"maxInclusive": size_in_bytes}
     return xtce_type
 
 
