@@ -757,6 +757,7 @@
             <LeadingSize sizeInBitsOfSizeTag="16" />
           </Variable>
         </StringDataEncoding>
+        <SizeRangeInCharacters maxInclusive="80" />
       </StringArgumentType>
       <IntegerArgumentType name="PlatformSizeType" shortDescription="The unsigned type of larger sizes internal to the software,&#10;e.g., memory buffer sizes, file sizes. Must be unsigned.&#10;Supplied by platform, overridable by project." baseType="U64" signed="false" sizeInBits="64" />
       <IntegerArgumentType name="FwIdType" shortDescription="The id type." baseType="U32" signed="false" sizeInBits="32" />
@@ -793,6 +794,7 @@
             <LeadingSize sizeInBitsOfSizeTag="16" />
           </Variable>
         </StringDataEncoding>
+        <SizeRangeInCharacters maxInclusive="100" />
       </StringArgumentType>
       <StringArgumentType name="string200">
         <StringDataEncoding encoding="UTF-8">
@@ -803,6 +805,7 @@
             <LeadingSize sizeInBitsOfSizeTag="16" />
           </Variable>
         </StringDataEncoding>
+        <SizeRangeInCharacters maxInclusive="200" />
       </StringArgumentType>
       <StringArgumentType name="string240">
         <StringDataEncoding encoding="UTF-8">
@@ -813,6 +816,7 @@
             <LeadingSize sizeInBitsOfSizeTag="16" />
           </Variable>
         </StringDataEncoding>
+        <SizeRangeInCharacters maxInclusive="240" />
       </StringArgumentType>
       <StringArgumentType name="string256">
         <StringDataEncoding encoding="UTF-8">
@@ -823,6 +827,7 @@
             <LeadingSize sizeInBitsOfSizeTag="16" />
           </Variable>
         </StringDataEncoding>
+        <SizeRangeInCharacters maxInclusive="256" />
       </StringArgumentType>
       <StringArgumentType name="string40">
         <StringDataEncoding encoding="UTF-8">
@@ -833,6 +838,7 @@
             <LeadingSize sizeInBitsOfSizeTag="16" />
           </Variable>
         </StringDataEncoding>
+        <SizeRangeInCharacters maxInclusive="40" />
       </StringArgumentType>
     </ArgumentTypeSet>
     <MetaCommandSet>
@@ -928,7 +934,7 @@
       </TelemetryMetaData>
       <CommandMetaData>
         <MetaCommandSet>
-          <MetaCommand name="CMD_NO_OP">
+          <MetaCommand name="CMD_NO_OP" shortDescription="No-op command">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="16777216" />
@@ -939,14 +945,14 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="CMD_NO_OP_STRING">
+          <MetaCommand name="CMD_NO_OP_STRING" shortDescription="No-op string command">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="16777217" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="arg1" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string40" />
+              <Argument name="arg1" shortDescription="The String command argument" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string40" />
             </ArgumentList>
             <CommandContainer name="CMD_NO_OP_STRING">
               <EntryList>
@@ -955,16 +961,16 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="CMD_TEST_CMD_1">
+          <MetaCommand name="CMD_TEST_CMD_1" shortDescription="No-op command">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="16777218" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="arg1" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/I32" />
-              <Argument name="arg2" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/F32" />
-              <Argument name="arg3" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/U8" />
+              <Argument name="arg1" shortDescription="The I32 command argument" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/I32" />
+              <Argument name="arg2" shortDescription="The F32 command argument" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/F32" />
+              <Argument name="arg3" shortDescription="The U8 command argument" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/U8" />
             </ArgumentList>
             <CommandContainer name="CMD_TEST_CMD_1">
               <EntryList>
@@ -975,7 +981,7 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="CMD_CLEAR_TRACKING">
+          <MetaCommand name="CMD_CLEAR_TRACKING" shortDescription="Clear command tracking info to recover from components not returning status">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="16777219" />
@@ -992,15 +998,15 @@
     <SpaceSystem name="events">
       <CommandMetaData>
         <MetaCommandSet>
-          <MetaCommand name="SET_EVENT_FILTER">
+          <MetaCommand name="SET_EVENT_FILTER" shortDescription="Set filter for reporting events. Events are not stored in component.">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="16781312" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="filterLevel" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Svc/EventManager/FilterSeverity" />
-              <Argument name="filterEnabled" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Svc/EventManager/Enabled" />
+              <Argument name="filterLevel" shortDescription="Filter level" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Svc/EventManager/FilterSeverity" />
+              <Argument name="filterEnabled" shortDescription="Filter state" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Svc/EventManager/Enabled" />
             </ArgumentList>
             <CommandContainer name="SET_EVENT_FILTER">
               <EntryList>
@@ -1010,7 +1016,7 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="SET_ID_FILTER">
+          <MetaCommand name="SET_ID_FILTER" shortDescription="Filter a particular ID">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="16781314" />
@@ -1018,7 +1024,7 @@
             </BaseMetaCommand>
             <ArgumentList>
               <Argument name="ID" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/FwEventIdType" />
-              <Argument name="idFilterEnabled" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Svc/EventManager/Enabled" />
+              <Argument name="idFilterEnabled" shortDescription="ID filter state" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Svc/EventManager/Enabled" />
             </ArgumentList>
             <CommandContainer name="SET_ID_FILTER">
               <EntryList>
@@ -1028,7 +1034,7 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="DUMP_FILTER_STATE">
+          <MetaCommand name="DUMP_FILTER_STATE" shortDescription="Dump the filter states via events">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="16781315" />
@@ -1064,14 +1070,14 @@
       </TelemetryMetaData>
       <CommandMetaData>
         <MetaCommandSet>
-          <MetaCommand name="HLTH_ENABLE">
+          <MetaCommand name="HLTH_ENABLE" shortDescription="A command to enable or disable health checks">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="16785408" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="enable" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Fw/Enabled" />
+              <Argument name="enable" shortDescription="whether or not health checks are enabled" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Fw/Enabled" />
             </ArgumentList>
             <CommandContainer name="HLTH_ENABLE">
               <EntryList>
@@ -1080,15 +1086,15 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="HLTH_PING_ENABLE">
+          <MetaCommand name="HLTH_PING_ENABLE" shortDescription="Ignore a particular ping entry">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="16785409" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="entry" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string40" />
-              <Argument name="enable" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Fw/Enabled" />
+              <Argument name="entry" shortDescription="The entry to enable/disable" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string40" />
+              <Argument name="enable" shortDescription="whether or not a port is pinged" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Fw/Enabled" />
             </ArgumentList>
             <CommandContainer name="HLTH_PING_ENABLE">
               <EntryList>
@@ -1098,16 +1104,16 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="HLTH_CHNG_PING">
+          <MetaCommand name="HLTH_CHNG_PING" shortDescription="Change ping value">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="16785410" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="entry" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string40" />
-              <Argument name="warningValue" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/U32" />
-              <Argument name="fatalValue" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/U32" />
+              <Argument name="entry" shortDescription="The entry to modify" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string40" />
+              <Argument name="warningValue" shortDescription="Ping warning threshold" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/U32" />
+              <Argument name="fatalValue" shortDescription="Ping fatal threshold" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/U32" />
             </ArgumentList>
             <CommandContainer name="HLTH_CHNG_PING">
               <EntryList>
@@ -1143,14 +1149,14 @@
       </TelemetryMetaData>
       <CommandMetaData>
         <MetaCommandSet>
-          <MetaCommand name="SET_LEVEL">
+          <MetaCommand name="SET_LEVEL" shortDescription="Set telemetry send level">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="16801792" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="level" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/FwChanIdType" />
+              <Argument name="level" shortDescription="The I32 command argument" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/FwChanIdType" />
             </ArgumentList>
             <CommandContainer name="SET_LEVEL">
               <EntryList>
@@ -1159,14 +1165,14 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="SEND_PKT">
+          <MetaCommand name="SEND_PKT" shortDescription="Force a packet to be sent">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="16801793" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="id" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/U32" />
+              <Argument name="id" shortDescription="The packet ID" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/U32" />
             </ArgumentList>
             <CommandContainer name="SEND_PKT">
               <EntryList>
@@ -1473,14 +1479,14 @@
       </TelemetryMetaData>
       <CommandMetaData>
         <MetaCommandSet>
-          <MetaCommand name="ENABLE">
+          <MetaCommand name="ENABLE" shortDescription="A command to enable or disable Event verbosity and Telemetry">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="16789504" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="enable" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Svc/VersionEnabled" />
+              <Argument name="enable" shortDescription="whether or not Version telemetry is enabled" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Svc/VersionEnabled" />
             </ArgumentList>
             <CommandContainer name="ENABLE">
               <EntryList>
@@ -1489,14 +1495,14 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="VERSION">
+          <MetaCommand name="VERSION" shortDescription="Report version as Event">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="16789505" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="version_type" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Svc/VersionType" />
+              <Argument name="version_type" shortDescription="which version type Event is requested" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Svc/VersionType" />
             </ArgumentList>
             <CommandContainer name="VERSION">
               <EntryList>
@@ -1545,15 +1551,15 @@
       </TelemetryMetaData>
       <CommandMetaData>
         <MetaCommandSet>
-          <MetaCommand name="FLUSH_QUEUE">
+          <MetaCommand name="FLUSH_QUEUE" shortDescription="Flush a specific queue. This will discard all queued data in the specified queue removing it from eventual&#10;downlink. Buffers requiring ownership return will be returned via the bufferReturnOut port.">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="33554432" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="queueType" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Svc/QueueType" />
-              <Argument name="indexType" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/FwIndexType" />
+              <Argument name="queueType" shortDescription="The Queue data type" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Svc/QueueType" />
+              <Argument name="indexType" shortDescription="The index of the queue (within the supplied type) to flush" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/FwIndexType" />
             </ArgumentList>
             <CommandContainer name="FLUSH_QUEUE">
               <EntryList>
@@ -1563,7 +1569,7 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="FLUSH_ALL_QUEUES">
+          <MetaCommand name="FLUSH_ALL_QUEUES" shortDescription="Flush all queues. This will discard all queued data removing it from eventual downlink. Buffers requiring&#10;ownership return will be returned via the bufferReturnOut port.">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="33554433" />
@@ -1574,16 +1580,16 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="SET_QUEUE_PRIORITY">
+          <MetaCommand name="SET_QUEUE_PRIORITY" shortDescription="Set the priority of a specific queue at runtime">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="33554434" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="queueType" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Svc/QueueType" />
-              <Argument name="indexType" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/FwIndexType" />
-              <Argument name="newPriority" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/FwIndexType" />
+              <Argument name="queueType" shortDescription="The Queue data type" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Svc/QueueType" />
+              <Argument name="indexType" shortDescription="The index of the queue (within the supplied type) to modify" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/FwIndexType" />
+              <Argument name="newPriority" shortDescription="New priority value for the queue" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/FwIndexType" />
             </ArgumentList>
             <CommandContainer name="SET_QUEUE_PRIORITY">
               <EntryList>
@@ -1822,7 +1828,7 @@
       </TelemetryMetaData>
       <CommandMetaData>
         <MetaCommandSet>
-          <MetaCommand name="BUILD_CATALOG">
+          <MetaCommand name="BUILD_CATALOG" shortDescription="Build catalog from data product directory. Will block until complete">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="67108864" />
@@ -1833,15 +1839,15 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="START_XMIT_CATALOG">
+          <MetaCommand name="START_XMIT_CATALOG" shortDescription="Start transmitting catalog">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="67108865" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="wait" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Fw/Wait" />
-              <Argument name="remainActive" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/bool" />
+              <Argument name="wait" shortDescription="have START_XMIT command complete wait for catalog to complete transmitting" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Fw/Wait" />
+              <Argument name="remainActive" shortDescription="should the catalog resume transmission when Dps are added at runtime" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/bool" />
             </ArgumentList>
             <CommandContainer name="START_XMIT_CATALOG">
               <EntryList>
@@ -1851,7 +1857,7 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="STOP_XMIT_CATALOG">
+          <MetaCommand name="STOP_XMIT_CATALOG" shortDescription="Stop transmitting catalog">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="67108866" />
@@ -1862,7 +1868,7 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="CLEAR_CATALOG">
+          <MetaCommand name="CLEAR_CATALOG" shortDescription="clear existing catalog">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="67108867" />
@@ -1937,7 +1943,7 @@
       </TelemetryMetaData>
       <CommandMetaData>
         <MetaCommandSet>
-          <MetaCommand name="CLEAR_EVENT_THROTTLE">
+          <MetaCommand name="CLEAR_EVENT_THROTTLE" shortDescription="Clear event throttling">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="67112960" />
@@ -2025,7 +2031,7 @@
       </TelemetryMetaData>
       <CommandMetaData>
         <MetaCommandSet>
-          <MetaCommand name="CLEAR_EVENT_THROTTLE">
+          <MetaCommand name="CLEAR_EVENT_THROTTLE" shortDescription="Clear event throttling">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="67117056" />
@@ -2089,15 +2095,15 @@
       </TelemetryMetaData>
       <CommandMetaData>
         <MetaCommandSet>
-          <MetaCommand name="SendFile">
+          <MetaCommand name="SendFile" shortDescription="Read a named file off the disk. Divide it into packets and send the packets for transmission to the ground.">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="83890176" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="sourceFileName" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string100" />
-              <Argument name="destFileName" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string100" />
+              <Argument name="sourceFileName" shortDescription="The name of the on-board file to send" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string100" />
+              <Argument name="destFileName" shortDescription="The name of the destination file on the ground" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string100" />
             </ArgumentList>
             <CommandContainer name="SendFile">
               <EntryList>
@@ -2107,7 +2113,7 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="Cancel">
+          <MetaCommand name="Cancel" shortDescription="Cancel the downlink in progress, if any">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="83890177" />
@@ -2118,17 +2124,17 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="SendPartial">
+          <MetaCommand name="SendPartial" shortDescription="Read a named file off the disk from a starting position. Divide it into packets and send the packets for transmission to the ground.">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="83890178" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="sourceFileName" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string100" />
-              <Argument name="destFileName" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string100" />
-              <Argument name="startOffset" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/U32" />
-              <Argument name="length" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/U32" />
+              <Argument name="sourceFileName" shortDescription="The name of the on-board file to send" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string100" />
+              <Argument name="destFileName" shortDescription="The name of the destination file on the ground" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string100" />
+              <Argument name="startOffset" shortDescription="Starting offset of the source file" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/U32" />
+              <Argument name="length" shortDescription="Number of bytes to send from starting offset. Length of 0 implies until the end of the file" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/U32" />
             </ArgumentList>
             <CommandContainer name="SendPartial">
               <EntryList>
@@ -2178,14 +2184,14 @@
       </TelemetryMetaData>
       <CommandMetaData>
         <MetaCommandSet>
-          <MetaCommand name="CreateDirectory">
+          <MetaCommand name="CreateDirectory" shortDescription="Create a directory">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="83894272" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="dirName" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
+              <Argument name="dirName" shortDescription="The directory to create" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
             </ArgumentList>
             <CommandContainer name="CreateDirectory">
               <EntryList>
@@ -2194,15 +2200,15 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="MoveFile">
+          <MetaCommand name="MoveFile" shortDescription="Move a file">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="83894273" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="sourceFileName" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
-              <Argument name="destFileName" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
+              <Argument name="sourceFileName" shortDescription="The source file name" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
+              <Argument name="destFileName" shortDescription="The destination file name" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
             </ArgumentList>
             <CommandContainer name="MoveFile">
               <EntryList>
@@ -2212,14 +2218,14 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="RemoveDirectory">
+          <MetaCommand name="RemoveDirectory" shortDescription="Remove a directory, which must be empty">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="83894274" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="dirName" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
+              <Argument name="dirName" shortDescription="The directory to remove" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
             </ArgumentList>
             <CommandContainer name="RemoveDirectory">
               <EntryList>
@@ -2228,15 +2234,15 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="RemoveFile">
+          <MetaCommand name="RemoveFile" shortDescription="Remove a file">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="83894275" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="fileName" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
-              <Argument name="ignoreErrors" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/bool" />
+              <Argument name="fileName" shortDescription="The file to remove" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
+              <Argument name="ignoreErrors" shortDescription="Ignore nonexistent files" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/bool" />
             </ArgumentList>
             <CommandContainer name="RemoveFile">
               <EntryList>
@@ -2246,15 +2252,15 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="ShellCommand">
+          <MetaCommand name="ShellCommand" shortDescription="Perform a Linux shell command and write the output to a log file.">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="83894276" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="command" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string256" />
-              <Argument name="logFileName" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
+              <Argument name="command" shortDescription="The shell command string" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string256" />
+              <Argument name="logFileName" shortDescription="The name of the log file" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
             </ArgumentList>
             <CommandContainer name="ShellCommand">
               <EntryList>
@@ -2264,15 +2270,15 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="AppendFile">
+          <MetaCommand name="AppendFile" shortDescription="Append 1 file's contents to the end of another.">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="83894277" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="source" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
-              <Argument name="target" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
+              <Argument name="source" shortDescription="The name of the file to take content from" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
+              <Argument name="target" shortDescription="The name of the file to append to" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
             </ArgumentList>
             <CommandContainer name="AppendFile">
               <EntryList>
@@ -2289,7 +2295,7 @@
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="fileName" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
+              <Argument name="fileName" shortDescription="The file to get the size of" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
             </ArgumentList>
             <CommandContainer name="FileSize">
               <EntryList>
@@ -2298,14 +2304,14 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="ListDirectory">
+          <MetaCommand name="ListDirectory" shortDescription="List the contents of a directory">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="83894279" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="dirName" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
+              <Argument name="dirName" shortDescription="The directory to list" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
             </ArgumentList>
             <CommandContainer name="ListDirectory">
               <EntryList>
@@ -2314,14 +2320,14 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="CalculateCrc">
+          <MetaCommand name="CalculateCrc" shortDescription="List the contents of a directory">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="83894280" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="filename" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
+              <Argument name="filename" shortDescription="The file to CRC" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
             </ArgumentList>
             <CommandContainer name="CalculateCrc">
               <EntryList>
@@ -2383,7 +2389,7 @@
     <SpaceSystem name="prmDb">
       <CommandMetaData>
         <MetaCommandSet>
-          <MetaCommand name="PRM_SAVE_FILE">
+          <MetaCommand name="PRM_SAVE_FILE" shortDescription="Command to save parameter image to file. Uses file name passed to constructor">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="83898368" />
@@ -2394,15 +2400,15 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="PRM_LOAD_FILE">
+          <MetaCommand name="PRM_LOAD_FILE" shortDescription="Loads a file from storage into the staging database. The file could have selective IDs and not the whole set.">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="83898369" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="fileName" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
-              <Argument name="merge" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Svc/PrmDb/Merge" />
+              <Argument name="fileName" shortDescription="The name of the on-board file to set parameters from" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string200" />
+              <Argument name="merge" shortDescription="Whether to merge or fully reset the parameter database from the file contents" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Svc/PrmDb/Merge" />
             </ArgumentList>
             <CommandContainer name="PRM_LOAD_FILE">
               <EntryList>
@@ -2412,7 +2418,7 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="PRM_COMMIT_STAGED">
+          <MetaCommand name="PRM_COMMIT_STAGED" shortDescription="Commits the backup database to become the prime (active) database">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="83898370" />
@@ -2502,15 +2508,15 @@
       </TelemetryMetaData>
       <CommandMetaData>
         <MetaCommandSet>
-          <MetaCommand name="CS_RUN">
+          <MetaCommand name="CS_RUN" shortDescription="Run a command sequence file">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="268451840" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="fileName" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string240" />
-              <Argument name="block" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Svc/CmdSequencer/BlockState" />
+              <Argument name="fileName" shortDescription="The name of the sequence file" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string240" />
+              <Argument name="block" shortDescription="Return command status when complete or not" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Svc/CmdSequencer/BlockState" />
             </ArgumentList>
             <CommandContainer name="CS_RUN">
               <EntryList>
@@ -2520,14 +2526,14 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="CS_VALIDATE">
+          <MetaCommand name="CS_VALIDATE" shortDescription="Validate a command sequence file">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="268451841" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="fileName" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string240" />
+              <Argument name="fileName" shortDescription="The name of the sequence file" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/string240" />
             </ArgumentList>
             <CommandContainer name="CS_VALIDATE">
               <EntryList>
@@ -2536,7 +2542,7 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="CS_CANCEL">
+          <MetaCommand name="CS_CANCEL" shortDescription="Cancel a command sequence">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="268451842" />
@@ -2547,7 +2553,7 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="CS_START">
+          <MetaCommand name="CS_START" shortDescription="Start running a command sequence">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="268451843" />
@@ -2558,7 +2564,7 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="CS_STEP">
+          <MetaCommand name="CS_STEP" shortDescription="Perform one step in a command sequence. Valid only if CmdSequencer is in MANUAL run mode.">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="268451844" />
@@ -2569,7 +2575,7 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="CS_AUTO">
+          <MetaCommand name="CS_AUTO" shortDescription="Set the run mode to AUTO.">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="268451845" />
@@ -2580,7 +2586,7 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="CS_MANUAL">
+          <MetaCommand name="CS_MANUAL" shortDescription="Set the run mode to MANUAL.">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="268451846" />
@@ -2591,7 +2597,7 @@
               <BaseContainer containerRef="FPrimeCommand" />
             </CommandContainer>
           </MetaCommand>
-          <MetaCommand name="CS_JOIN_WAIT">
+          <MetaCommand name="CS_JOIN_WAIT" shortDescription="Wait for sequences that are running to finish. Allow user to run multiple seq files in SEQ_NO_BLOCK mode then wait for them to finish before allowing more seq run request.">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="268451847" />
@@ -2989,14 +2995,14 @@
       </TelemetryMetaData>
       <CommandMetaData>
         <MetaCommandSet>
-          <MetaCommand name="ENABLE">
+          <MetaCommand name="ENABLE" shortDescription="A command to enable or disable system resource telemetry">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="268509184" />
               </ArgumentAssignmentList>
             </BaseMetaCommand>
             <ArgumentList>
-              <Argument name="enable" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Svc/SystemResourceEnabled" />
+              <Argument name="enable" shortDescription="whether or not system resource telemetry is enabled" argumentTypeRef="/FprimeYamcsReference_YamcsDeployment/Svc/SystemResourceEnabled" />
             </ArgumentList>
             <CommandContainer name="ENABLE">
               <EntryList>
