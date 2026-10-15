@@ -187,6 +187,50 @@ def formal_parameter_types(fprime_section):
     return [parameter["type"] for parameter in formal_parameters(fprime_section)]
 
 
+# The XTCE verifiers that every command gets, each mapped to the event of Svc.CommandDispatcher that it watches. The
+# XTCE schema requires the verifiers of a command in this order.
+COMMAND_VERIFIER_EVENTS = {
+    "ExecutionVerifier": "OpCodeDispatched",
+    "CompleteVerifier": "OpCodeCompleted",
+    "FailedVerifier": "OpCodeError",
+}
+
+
+def command_verifier_events(fprime_dict):
+    """ Helper function to find the events that command verifiers watch
+
+    Args:
+        fprime_dict: F Prime dictionary (loaded from JSON)
+    Returns:
+        A dictionary mapping XTCE verifier names to F Prime events, empty when the dictionary lacks these events
+    """
+    return {
+        verifier: event
+        for verifier, event_name in COMMAND_VERIFIER_EVENTS.items()
+        for event in fprime_dict["events"]
+        # The dictionary names the instance that emits an event (e.g., CdhCore.cmdDisp) but not the component type of
+        # that instance, so we match on the last part of the event name.
+        if event["name"].endswith(f".{event_name}")
+    }
+
+
+def invalid_command_event(fprime_dict):
+    """ Helper function to find the InvalidCommand event of the command dispatcher
+
+    Args:
+        fprime_dict: F Prime dictionary (loaded from JSON)
+    Returns:
+        The InvalidCommand event of the command dispatcher, None when the dictionary lacks it or lacks OpCodeError
+    """
+    opcode_error = command_verifier_events(fprime_dict).get("FailedVerifier")
+    if not opcode_error:
+        return None
+    # Svc.FpySequencer has an event named InvalidCommand as well. We want the one that the command dispatcher emits,
+    # so we look for it on the instance that emits OpCodeError.
+    instance = opcode_error["name"].rsplit(".", 1)[0]
+    return next((event for event in fprime_dict["events"] if event["name"] == f"{instance}.InvalidCommand"), None)
+
+
 def get_or_create_nested_space_system(root: Dict[str, Any], namespace_path: List[str]) -> Dict[str, Any]:
     """Navigate or create nested SpaceSystem hierarchy.
 

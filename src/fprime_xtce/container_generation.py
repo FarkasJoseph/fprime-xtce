@@ -5,7 +5,7 @@ Copyright (c) 2026 LeStarch. All rights reserved.
 This software is Licensed under the Apache 2.0 License. See LICENSE for details.
 """
 
-from .utilities import xtce_names, convert_to_xtce_reference
+from .utilities import xtce_names, convert_to_xtce_reference, command_verifier_events, invalid_command_event
 from .primitive_containers import BASE_COMMANDS, BASE_CONTAINERS
 
 
@@ -108,6 +108,23 @@ def generate_xtce_containers(fprime_dict, xtce_parameters):
             ]
         )
 
+    # Add containers for the events that command verifiers watch (pairs with CommandDispatcher)
+    verifier_events = command_verifier_events(fprime_dict)
+    for event in verifier_events.values():
+        parameter_refs = [f"{event['name']}.{param['name']}" for param in event["formalParams"]]
+        xtce_containers.append(
+            build_container(event, parameter_refs, "FPrimeEvent", "FPrimeEventId", params)
+        )
+
+    # The command dispatcher emits an InvalidCommand event for a command whose opcode it does not know, and that event
+    # must fail the command too. The XTCE schema allows a command only one failed verifier, so we decode the opcode of
+    # that event into the opcode parameter of OpCodeError, which the failed verifier already reads.
+    invalid_command = invalid_command_event(fprime_dict)
+    if invalid_command:
+        opcode_error = verifier_events["FailedVerifier"]
+        opcode_ref = f"{opcode_error['name']}.{opcode_error['formalParams'][0]['name']}"
+        xtce_containers.append(build_container(invalid_command, [opcode_ref], "FPrimeEvent", "FPrimeEventId", params))
+
     # TODO: Add containers for events (pairs with EventManager) when event support is implemented
     # for event in fprime_dict["events"]:
     #     parameter_refs = [f"{event['name']}.{param['name']}" for param in event["formalParams"]]
@@ -119,6 +136,73 @@ def generate_xtce_containers(fprime_dict, xtce_parameters):
     names = xtce_names(xtce_containers)
     assert len(names) == len(set(names)), f"Duplicate container names found: {names}"
     return xtce_containers
+
+
+def build_verifier(verifier, event, invalid_command):
+    """Build a command verifier that waits for an event to report the opcode of the command
+
+    Args:
+        verifier: The XTCE verifier to build (e.g., "CompleteVerifier" or "FailedVerifier")
+        event: The F Prime event whose first formal parameter is the opcode of the command
+        invalid_command: The InvalidCommand event, which fails the command as well (None when the dictionary lacks it)
+    Returns:
+        A dictionary representing the verifier
+    """
+    refs = [f"{event['name']}.{param['name']}".replace('.', '/') for param in event["formalParams"]]
+    # The XTCE schema does not allow command arguments as inputs of a verifier's algorithm, so we read the opcode of
+    # the command from /yamcs/cmd/arg, where YAMCS provides the arguments of the command being verified.
+    inputs = {"eventOpcode": refs[0], "commandOpcode": "/yamcs/cmd/arg/OpCode"}
+    # YAMCS runs the algorithm every time the event arrives, whichever command the event reports. We return null when
+    # the event reports another command so that the verifier keeps waiting. Returning false would stop the verifier,
+    # and an execution or complete verifier that stops this way fails the command.
+    same_opcode = "eventOpcode.getEngValue().toLong() == commandOpcode.getEngValue().toLong()"
+    text = f"return {same_opcode} ? Boolean.TRUE : null;"
+    if verifier == "FailedVerifier":
+        # The failed verifier returns a message, which YAMCS puts in the command history. The message is the response
+        # code, which is the second argument of OpCodeError.
+        inputs["error"] = refs[1]
+        # The container of InvalidCommand fills eventOpcode as well, so we read the event id, which every event packet
+        # carries, to tell whether OpCodeError or InvalidCommand arrived.
+        inputs["eventId"] = "FPrimeEventId"
+        # With the event id as an input YAMCS runs the algorithm for every event packet, and the other inputs then
+        # hold the values of an earlier packet or no value at all. So we return null for any other event before we
+        # read them, and we read the response code only for OpCodeError.
+        text = (
+            "long id = eventId.getEngValue().toLong();\n"
+            "String reason;\n"
+            # The L makes each id a Java long, because an event id may not fit in an int.
+            f"if (id == {event['id']}L) reason = error.getEngValue().toString();\n"
+            # InvalidCommand carries no response code, so the message is the label that Fw.CmdResponse has for an
+            # unknown opcode.
+            + (f'else if (id == {invalid_command["id"]}L) reason = "INVALID_OPCODE";\n' if invalid_command else "")
+            + "else return null;\n"
+            f"return {same_opcode} ? new org.yamcs.commanding.VerificationResult(true, reason) : null;"
+        )
+    xtce_verifier = {
+        "CustomAlgorithm": {
+            "name": f"FPrime{verifier}",
+            # YAMCS compiles java-expression text as the body of a Java method, so the text is one or more statements
+            # and it returns the result of the verifier.
+            "AlgorithmText": {"language": "java-expression", "#text": text},
+            "InputSet": [
+                {"InputParameterInstanceRef": {"parameterRef": ref, "inputName": name}} for name, ref in inputs.items()
+            ],
+        },
+        "CheckWindow": {
+            # We set no time limit of our own, because how long a command may take depends on the project. The XTCE
+            # schema requires a window on every verifier, so each one gets a window of one year.
+            "timeToStopChecking": "P365D",
+            # We count the window from the release of the command. By default YAMCS counts it from the moment the
+            # previous verifier passes. The verifier before the failed verifier is the complete verifier, which never
+            # passes for a command that fails, so the failed verifier would never start.
+            "timeWindowIsRelativeTo": "commandRelease",
+        },
+    }
+    if verifier == "ExecutionVerifier":
+        # YAMCS names the stage of a verifier after its name attribute, and after its kind when it has none. This
+        # verifier passes when the command is dispatched, so we name its stage Dispatched.
+        xtce_verifier["name"] = "Dispatched"
+    return {verifier: xtce_verifier}
 
 
 def generate_xtce_commands(fprime_dict, xtce_command_types, deployment):
@@ -137,6 +221,15 @@ def generate_xtce_commands(fprime_dict, xtce_command_types, deployment):
         List of XTCE command definitions converted from the F Prime dictionary
     """
     commands = BASE_COMMANDS.copy()
+    invalid_command = invalid_command_event(fprime_dict)
+    verifiers = [
+        build_verifier(verifier, event, invalid_command)
+        for verifier, event in command_verifier_events(fprime_dict).items()
+    ]
+    if verifiers:
+        # Every F Prime command inherits FPrimeCommand, the last base command, so its verifiers apply to all of them.
+        # We replace the entry because it is the same dictionary that BASE_COMMANDS holds, which we must not change.
+        commands[-1] = {"MetaCommand": {**commands[-1]["MetaCommand"], "VerifierSet": verifiers}}
     for fprime_command in fprime_dict["commands"]:
         # Command names use relative paths (no deployment prefix)
         command_name = fprime_command["name"].replace('.', '/')
