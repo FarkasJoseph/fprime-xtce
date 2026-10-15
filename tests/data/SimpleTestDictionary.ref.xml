@@ -491,7 +491,7 @@
       </TelemetryMetaData>
       <CommandMetaData>
         <MetaCommandSet>
-          <MetaCommand name="SetThreshold">
+          <MetaCommand name="SetThreshold" shortDescription="Set threshold value">
             <BaseMetaCommand metaCommandRef="FPrimeCommand">
               <ArgumentAssignmentList>
                 <ArgumentAssignment argumentName="OpCode" argumentValue="300" />

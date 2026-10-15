@@ -242,12 +242,13 @@ def generate_xtce_commands(fprime_dict, xtce_command_types, deployment):
             else:
                 type_ref = convert_to_xtce_reference(f"string{param['type']['size']}", deployment)
 
-            argument_list.append({
-                "Argument": {
-                    "name": param["name"],
-                    "argumentTypeRef": type_ref,
-                }
-            })
+            argument = {
+                "name": param["name"],
+                "argumentTypeRef": type_ref,
+            }
+            if "annotation" in param:
+                argument["shortDescription"] = param["annotation"]
+            argument_list.append({"Argument": argument})
 
         command = {
             "MetaCommand": {
@@ -278,6 +279,8 @@ def generate_xtce_commands(fprime_dict, xtce_command_types, deployment):
                 },
             }
         }
+        if "annotation" in fprime_command:
+            command["MetaCommand"]["shortDescription"] = fprime_command["annotation"]
 
         # TODO: Add type validation when needed for debugging
         # for argument in command["MetaCommand"]["ArgumentList"]:
